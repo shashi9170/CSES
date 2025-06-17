@@ -1,8 +1,3 @@
-🔗 Problem Link
----------------------------
-https://cses.fi/problemset/result/11475110/
-
-
 🔍 Key Observations:
 --------------------------
 1. A tree is an acyclic connected graph, so there is exactly one path between any two nodes.
