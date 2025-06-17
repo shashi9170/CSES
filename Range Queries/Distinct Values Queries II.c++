@@ -1,5 +1,44 @@
+🔗 Problem Intuition
+--------------------------
+You're given an array x and multiple queries of two types:
+    1. Type 2 (t=2): Check if there exists any duplicate element in the subarray [a, b].
+    2. Type 1 (t=1): Modify a specific index k to a new value u.
 
 
+🔍 Key Observations
+----------------------------------
+1. The question revolves around tracking duplicate values in a given range.
+2. To detect duplicates efficiently in a subarray, we can maintain for each element its next occurrence index.
+3. If there is a next occurrence of the same value within the range, it means a duplicate exists.
+4. So the idea is to:
+    4.1. Store the next index of occurrence for each element.
+    4.2. Build a segment tree to quickly query the minimum next occurrence in a range.
+
+
+🧠 Core Concepts Used
+---------------------------------
+1. Segment Tree
+    1.1. Maintains the minimum of the next occurrence of any element for each range.
+    1.2. If the minimum next occurrence ≤ b, there’s a duplicate in [a, b].
+2. Map of Sets
+    2.1. map<int, set<int>> next_val: For each unique value in the array, store all its occurrence indices in a sorted set.
+    2.2. Enables O(log n) access to next and previous positions using upper_bound / lower_bound.
+
+
+⚙️ Query Logic
+-----------------------
+1. ✅ Type 2 (Check range [a, b]):
+    1.1. Query the segment tree for the minimum next occurrence in [a, b].
+    1.2. If min ≤ b, then that next occurrence lies inside the range → duplicate exists → "NO".
+    1.3. Else, all elements in the range are distinct → "YES".
+
+2. 🔄 Type 1 (Update x[k] = u):
+    2.1. Remove index k from the set of old value x[k]:
+        2.1.1. If it had a previous index, update that previous one’s next to next(k) or INF if none.
+    2.2. Insert index k into the set of new value u:
+        2.2.1. Find its next greater index >k (if exists) and update k's next accordingly.
+        2.2.2 Also, update the prev (if exists) of it to point to k.
+    
 
 
 #include <bits/stdc++.h>
