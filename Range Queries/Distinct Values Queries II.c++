@@ -41,6 +41,9 @@ You're given an array x and multiple queries of two types:
     
 
 
+💻 Code
+------------------------
+
 #include <bits/stdc++.h>
 #define int long long
 #define vi vector<int>
