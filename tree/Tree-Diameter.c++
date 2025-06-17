@@ -1,3 +1,27 @@
+🔗 Problem Link
+---------------------------
+https://cses.fi/problemset/result/11475110/
+
+
+🔍 Key Observations:
+--------------------------
+1. A tree is an acyclic connected graph, so there is exactly one path between any two nodes.
+2. The diameter of the tree is the longest such path.
+3. This longest path passes through the two deepest subtrees of some node.
+
+🧭 Core Idea:
+---------------------------
+1. Use Depth-First Search (DFS) to compute:
+2. The height of each subtree.
+3. The two longest paths going down from each node to its descendants.
+4. At every node, calculate a candidate diameter as the sum of these two longest paths.
+5. Keep track of the maximum diameter found during the traversal.
+
+ 
+
+💻 Code
+------------------------
+ 
 #include <bits/stdc++.h>
 #define int long long
 #define vi vector<int>
@@ -31,9 +55,12 @@ int dfs(int node, vi adj[], int parent, int &ans){
     ans = max(ans, tot);
     return height;
 }
- 
-void Question()
+
+signed main()
 {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+ 
     int n, a, b;
     cin >> n;
  
@@ -49,12 +76,4 @@ void Question()
     dfs(1, adj, -1, ans);
  
     cout << ans << '\n';
-}
- 
-signed main()
-{
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
- 
-    Question();
 }
