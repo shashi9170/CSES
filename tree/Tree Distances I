@@ -1,10 +1,41 @@
+🔍 Key Observations
+-------------------------------
+1. Since the graph is a tree, there is only one simple path between any two nodes.
+2. The maximum distance from any node is equal to the longest path (depth) from it in the tree.
+3. Naively computing distances from each node would take O(n²) — too slow for large trees.
+4. Instead, we can solve this in two depth-first searches (DFS) with smart reuse of data.
 
 
+🧠 Core Concepts Used
+--------------------------------
+1. Depth of Subtree (Downward Distance)
+   1.1. First, compute the longest path from each node downwards into its subtree.
+   1.2. For each node, record the depth of the deepest child.
+     (This gives us one possible direction of the max distance.)
+
+2. Rerooting Technique (Upward + Sibling Paths)
+  2.1. A node’s max distance might go upward toward its parent and then down into a different subtree.
+  2.2. To account for this, we perform a second DFS, passing information about the maximum path from the parent and sibling subtrees.
+  2.3. We use a multiset or tracking of top two maximum depths among children to efficiently compute what distance to pass down when we "move the root" to each child.
 
 
+⚙️ Approach Summary
+--------------------------------
+✅ Step 1: First DFS – Compute Downward Distances
+        1.1. For each node, calculate the maximum depth into its subtree.
+        1.2. This means: the longest path to a leaf starting from that node and moving only downward.
+
+🔄 Step 2: Second DFS – Rerooting and Propagating Upward Distances
+        2.1. Reuse the previously computed depths.
+        2.2. For each node, determine the maximum distance not just within its subtree, but also including paths through its parent.
+        2.3. This accounts for cases where the farthest node lies outside its own subtree.
+
+📤 Final Step: Print Answers
+      After both DFS runs, for each node, we now know the maximum distance to any other node in the tree.
 
 
-
+💻 Code
+------------------------
 
 #include <bits/stdc++.h>
 #define int long long
