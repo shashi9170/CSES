@@ -1,0 +1,80 @@
+
+
+
+
+
+
+
+
+#include <bits/stdc++.h>
+#define int long long
+ 
+#define vi vector<int> 
+using namespace std;
+ 
+int dfs(int node, vi a[], vi &vis, vi &dp){
+    vis[node] = 1;
+ 
+    for(auto nbr : a[node]){
+        if(vis[nbr])
+            continue;
+ 
+        dp[node] = max(dp[node], dfs(nbr, a, vis, dp) + 1);
+    }
+ 
+    return dp[node];
+}
+ 
+int dfs(int node, int parent, int maxi, vi a[], vi &dp, vi &dp1){
+    
+    multiset<int, greater<int>> s;
+    s.insert(maxi);
+ 
+    for(auto nbr : a[node]){
+        if(nbr == parent)
+            continue;
+ 
+        s.insert(dp[nbr] + 1);
+    }
+ 
+    int leaf = 0, ans = 0;
+    for(auto nbr : a[node]){
+        if(nbr == parent)
+            continue;
+ 
+        leaf++;
+ 
+        s.erase(s.find(dp[nbr]+1));
+        ans = max(ans, dfs(nbr, node, *s.begin() + 1, a, dp, dp1) + 1);
+        s.insert(dp[nbr]+1);
+    }
+ 
+    dp1[node] = max(ans, maxi);
+ 
+    return dp[node];    
+}
+ 
+ 
+signed main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+ 
+    int n, q, x, y;
+    cin >> n;
+ 
+    vi a[n+1], vis(n+1);
+    for(int i = 0; i < n - 1; i++){
+        cin >> x >> y;
+ 
+        a[x].push_back(y);
+        a[y].push_back(x);
+    }
+ 
+    vi dp(n+1), ans(n+1);
+    dfs(1, a, vis, dp);
+    dfs(1, 1, 0, a, dp, ans);
+ 
+    for(int i = 1; i <= n; i++)
+        cout << ans[i] << ' ';
+}
