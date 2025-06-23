@@ -1,5 +1,5 @@
 🔍 Key Observations
--------------------------------
+--------------------------------
 1. Since the graph is a tree, there is only one simple path between any two nodes.
 2. The maximum distance from any node is equal to the longest path (depth) from it in the tree.
 3. Naively computing distances from each node would take O(n²) — too slow for large trees.
