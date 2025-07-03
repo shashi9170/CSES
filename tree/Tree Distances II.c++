@@ -1,75 +1,63 @@
 #include <bits/stdc++.h>
 #define int long long
 using namespace std;
- 
-signed main()
-{
+
+int32_t main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    
-    int n, m, u, v, w;
-    cin >> n >> m;
- 
-    vector<pair<int, int>> adj[n+1], trans[n+1];
-    vector<tuple<int, int, int>> e;
-    for(int i = 0; i < m; i++){
-        cin >> u >> v >> w;
- 
-        adj[u].push_back({v, w});
-        trans[v].push_back({u, w});
-        e.push_back({u, v, w});
+
+    int n;
+    cin >> n;
+
+    vector<vector<int>> tree(n + 1);
+    for (int i = 0; i < n - 1; i++) {
+        int u, v;
+        cin >> u >> v;
+        tree[u].push_back(v);
+        tree[v].push_back(u);
     }
- 
-    vector<int> dp1(n+1, LLONG_MAX), dp2(n+1, LLONG_MAX);
-    set<pair<int, int>> st;
- 
-    dp1[1] = 0;
-    st.insert({0, 1});
- 
-    while(!st.empty()){
-        auto [cost, node] = *st.begin();
-        st.erase(st.begin());
- 
-        for(auto &[nbr, wt]: adj[node]){
-            auto it = st.find({dp1[nbr], nbr});
- 
-            if(dp1[nbr] > wt + dp1[node]){
-                if(it != st.end())
-                    st.erase(it);
- 
-                dp1[nbr] = wt + dp1[node];
-                st.insert({ dp1[nbr], nbr });
-            }
+
+    vector<vector<int>> dp(n + 1, vector<int>(2, 0));
+
+    function<void(int, int)> dfs = [&](int current, int parent) {
+        dp[current][1] = 1; 
+        for (int neighbor : tree[current]) {
+            if (neighbor == parent) continue;
+            dfs(neighbor, current);
+            dp[current][0] += dp[neighbor][0] + dp[neighbor][1]; 
+            dp[current][1] += dp[neighbor][1]; 
         }
-    }
- 
-    dp2[n] = 0;
-    st.insert({0, n});
-    while(!st.empty()){
-        auto [cost, node] = *st.begin();
-        st.erase(st.begin());
- 
-        for(auto &[nbr, wt]: trans[node]){
-            auto it = st.find({dp2[nbr], nbr});
- 
-            if(dp2[nbr] > wt + dp2[node]){
-                if(it != st.end())
-                    st.erase(it);
- 
-                dp2[nbr] = wt + dp2[node];
-                st.insert({ dp2[nbr], nbr });
-            }
+    };
+
+    dfs(1, 0);
+
+    vector<int> result(n + 1);
+
+    function<void(int, int, int, int)> dfsReroot = [&](int node, int parent, int upSubtreeSize, int upDistanceSum) {
+        int totalSize = upSubtreeSize;
+        int totalDist = upDistanceSum;
+
+        for (int child : tree[node]) {
+            if (child == parent) continue;
+            totalSize += dp[child][1];
+            totalDist += dp[child][0] + dp[child][1];
         }
-    }
- 
-    int ans = LLONG_MAX;
- 
-    for(auto &[u, v, wt]: e){
-        if(dp1[u] == LLONG_MAX || dp2[v] == LLONG_MAX)
-            continue;
-        
-        ans = min(ans, dp1[u] + dp2[v] + wt / 2);
-    }
- 
-    cout << ans << "\n";
+
+        result[node] = totalDist;
+
+        for (int child : tree[node]) {
+            if (child == parent) continue;
+
+            int newSize = totalSize - dp[child][1];
+            int newDist = totalDist - (dp[child][0] + dp[child][1]);
+
+            dfsReroot(child, node, newSize + 1, newDist + newSize + 1);
+        }
+    };
+
+    dfsReroot(1, 0, 0, 0);
+
+    for (int i = 1; i <= n; i++)
+        cout << result[i] << " ";
+    cout << "\n";
 }
